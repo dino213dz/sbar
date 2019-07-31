@@ -17,7 +17,7 @@
 # UTILISATION:
  - sbar.sh IP PORT
  - Exemple:
- - sbar.sh 127.45.63.89 [7009]
+ - sbar.sh 127.45.63.89 7009
 
 
    - Establishing session with 127.45.63.89 ...
