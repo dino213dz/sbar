@@ -317,7 +317,12 @@ else:
     install_shell()
 
     print cM + " |_[-] Recuperation de l'id et du hostname: " + cT + "En cours ..."
-    identity = cmd('whoami').strip()
+    try:
+	identity = cmd('whoami').strip()
+    except:
+        print cE + "    |_[X] ERREUR: Ce disque semble etre protege :/" + cM + ""
+	quit()
+
     hostname = cmd('cat /etc/hostname').strip()
     print cM + " |_[-] Succes: " + cT + "Youpi!"
     show_help()
@@ -329,4 +334,4 @@ else:
             user_input = raw_input(cM + lcmd + cS)
             running = execute(user_input)
         except:
-            print cE + " [!] ERREUR: Il y a comme de la colle dans les rouages semble t-il :/" + cM + ""
+            print cE + "[X] ERREUR: Il y a comme de la colle dans les rouages semble t-il :/" + cM + ""
